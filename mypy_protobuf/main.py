@@ -234,24 +234,30 @@ class PkgWriter(object):
         else:
             self.lines.append(self.indent + line.format(*args))
 
-    def _write_line_broken_text_with_prefix(self, text_block: str, prefix: str) -> None:
+    def _write_line_broken_text(self, text_block: str) -> None:
         if not text_block:
             return
         for l in text_block.rstrip().split("\n"):
-            self._write_line("{}{}", prefix, l)
+            self._write_line("{}", l)
 
     def _write_comments(self, scl: SourceCodeLocation) -> None:
         sci_loc = self.source_code_info_by_scl.get(tuple(scl))
-        if sci_loc is None:
+        if sci_loc is None or not (
+            sci_loc.leading_detached_comments
+            or sci_loc.leading_comments
+            or sci_loc.trailing_comments
+        ):
             return
+        self._write_line('"""')
         for leading_detached_comment in sci_loc.leading_detached_comments:
-            self._write_line_broken_text_with_prefix(leading_detached_comment, "#")
+            self._write_line_broken_text(leading_detached_comment)
             self._write_line("")
         if sci_loc.leading_comments is not None:
-            self._write_line_broken_text_with_prefix(sci_loc.leading_comments, "#")
+            self._write_line_broken_text(sci_loc.leading_comments)
         # Trailing comments also go in the header - to make sure it gets into the docstring
         if sci_loc.trailing_comments is not None:
-            self._write_line_broken_text_with_prefix(sci_loc.trailing_comments, "#")
+            self._write_line_broken_text(sci_loc.trailing_comments)
+        self._write_line('"""')
 
     def write_enum_values(
         self,

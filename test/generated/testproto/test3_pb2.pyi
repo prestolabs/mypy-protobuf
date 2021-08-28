@@ -116,11 +116,15 @@ class SimpleProto3(google.protobuf.message.Message):
     b_oneof_2: typing.Text = ...
     @property
     def bool(self) -> global___OuterMessage3: ...
-    # Test having fieldname match messagename
+    """
+     Test having fieldname match messagename
+    """
     OuterEnum: global___OuterEnum.V = ...
     @property
     def OuterMessage3(self) -> global___OuterMessage3: ...
-    # Test generation of map
+    """
+     Test generation of map
+    """
     @property
     def map_scalar(self) -> google.protobuf.internal.containers.ScalarMap[builtins.int, typing.Text]: ...
     @property
